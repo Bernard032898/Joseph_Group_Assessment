@@ -1,0 +1,22 @@
+INSERT INTO Tickets (title, description, priority, status)
+VALUES
+('Database Timeout', 'Database queries timing out during peak hours', 'Critical', 'In Progress'),
+('Application Crash', 'Application crashes when submitting forms', 'High', 'Open'),
+('Network Outage', 'Intermittent network connectivity issues', 'Critical', 'Open'),
+('File Upload Error', 'Users cannot upload documents', 'Medium', 'In Progress'),
+('Report Generation Issue', 'Reports take too long to generate', 'Medium', 'Open'),
+('SSO Authentication Failure', 'Single Sign-On login not working', 'High', 'Open'),
+('Access Request', 'New employee requires application access', 'Low', 'Closed'),
+('Mobile App Freeze', 'Mobile application freezes on startup', 'High', 'In Progress'),
+('Server Disk Space Alert', 'Server storage nearing capacity', 'Critical', 'Open'),
+('Notification Failure', 'System notifications are not delivered', 'Medium', 'Open'),
+('Audit Log Missing', 'User actions not recorded in audit logs', 'High', 'In Progress'),
+('CyberArk Access Issue', 'Privileged account access request failed', 'Critical', 'Open'),
+('Certificate Renewal', 'SSL certificate expires soon', 'Medium', 'Closed'),
+('Data Synchronization Failure', 'Data sync between systems failed', 'High', 'Open'),
+('Password Policy Error', 'Password complexity validation failing', 'Low', 'Open'),
+('Account Lockout', 'Multiple users locked out of accounts', 'High', 'In Progress'),
+('Backup Failure', 'Nightly database backup did not complete', 'Critical', 'Open'),
+('Performance Degradation', 'Application response time is slow', 'Medium', 'Open'),
+('Email Bounce Back', 'Outgoing emails are bouncing back', 'Medium', 'Closed'),
+('Role Assignment Issue', 'Users not receiving correct permissions', 'High', 'Open');
