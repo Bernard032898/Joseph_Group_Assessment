@@ -1,48 +1,99 @@
 # Joseph Group Assessment
 
-This repository contains the Joseph Group Assessment project, including a .NET console application for employee data processing.
+This repository contains the Joseph Group Assessment project with multiple components.
 
 ## Project Overview
 
-The `dotnet-task` is a .NET application that reads employee data from a CSV file and displays employee statistics organized by department.
+This project includes:
+
+1. **dotnet-task** - A .NET console application for employee data processing
+   - Reads employee data from CSV files
+   - Displays employee statistics organized by department
+   - See [dotnet-task/README.md](dotnet-task/README.md) for setup instructions
+
+2. **API** - Node.js Express ticket management system
+   - RESTful API for managing support tickets
+   - PostgreSQL database backend
+   - Full CRUD operations with Postman integration
+   - See [api/README.md](api/README.md) for setup and testing
 
 ## Prerequisites
 
-Before setting up this project on your device, ensure you have the following installed:
-
+### For dotnet-task:
 - **Git**: For cloning the repository
   - [Download Git](https://git-scm.com/download/win)
-  
-- **.NET SDK 10.0 or higher**: Required to build and run the application
+- **.NET SDK 10.0 or higher**
   - [Download .NET SDK](https://dotnet.microsoft.com/download)
-  - Verify installation: Open terminal and run `dotnet --version`
 
-## Setup Instructions
+### For API:
+- **Node.js** (v14 or higher)
+- **npm** or **yarn**
+- **PostgreSQL** (for database)
 
-### 1. Clone the Repository
+## Quick Start
 
-```bash
-git clone <repository-url>
-cd Joseph_Group_Assessment
-```
+### dotnet-task Setup
 
-### 2. Navigate to the dotnet-task Folder
+From the repository root:
 
 ```bash
 cd dotnet-task
-```
-
-### 3. Restore Dependencies
-
-```bash
 dotnet restore
+dotnet build
+dotnet run
 ```
 
-### 4. Build the Project
+See [dotnet-task/README.md](dotnet-task/README.md) for detailed instructions.
+
+### API Setup
+
+From the repository root:
 
 ```bash
-dotnet build
+cd api
+npm install
+npm run dev
 ```
+
+The API will run on `http://localhost:3000`
+
+For Postman testing guide and CRUD examples, see [api/POSTMAN_GUIDE.md](api/POSTMAN_GUIDE.md).
+
+## Project Structure
+
+```
+Joseph_Group_Assessment/
+├── dotnet-task/
+│   ├── README.md              # dotnet-task setup guide
+│   ├── Program.cs             # Main application code
+│   ├── employees.csv          # Sample employee data
+│   └── dotnet-task.csproj     # Project configuration
+├── api/
+│   ├── README.md              # API setup guide
+│   ├── POSTMAN_GUIDE.md       # Postman testing guide
+│   ├── app.js                 # Express application
+│   ├── package.json           # Dependencies
+│   ├── controllers/           # Business logic
+│   ├── routes/                # API routes
+│   └── config/                # Database configuration
+└── README.md                  # This file
+```
+
+## Components in Detail
+
+### 1. dotnet-task
+
+**Purpose:** Employee data processing and statistics
+
+**Features:**
+- Reads CSV files containing employee data
+- Groups employees by department
+- Displays statistical summaries
+- Validates data format
+
+**Technology:** C#, .NET 10.0
+
+**Quick Test:** [dotnet-task/README.md](dotnet-task/README.md)
 
 ## Running the Application
 
@@ -430,6 +481,162 @@ dotnet-task/
   - Groups employees by department
   - Displays sorted statistics
 
+---
+
+## API Documentation
+
+### 2. Ticket Management API
+
+**Purpose:** RESTful API for managing support tickets
+
+**Features:**
+- Create new tickets
+- View all tickets with filtering
+- Update ticket status
+- Filter by priority and status
+- PostgreSQL database persistence
+
+**Technology:** Node.js, Express, PostgreSQL
+
+**Port:** 3000
+
+### API Setup
+
+```bash
+cd api
+npm install
+npm run dev
+```
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/tickets` | Create a new ticket |
+| GET | `/tickets` | Get all tickets (with optional filters) |
+| PUT | `/tickets/:id/status` | Update ticket status |
+
+### Create Ticket (POST)
+
+```bash
+POST http://localhost:3000/tickets
+Content-Type: application/json
+
+{
+  "title": "Login Issue",
+  "description": "Users cannot login to the system",
+  "priority": "high"
+}
+```
+
+**Response (201):**
+```json
+{
+  "id": 1,
+  "title": "Login Issue",
+  "description": "Users cannot login to the system",
+  "priority": "high",
+  "status": "open",
+  "created_at": "2026-06-12T10:30:00.000Z"
+}
+```
+
+### Get All Tickets (GET)
+
+```bash
+GET http://localhost:3000/tickets
+```
+
+**Response (200):**
+```json
+[
+  {
+    "id": 1,
+    "title": "Login Issue",
+    "description": "Users cannot login to the system",
+    "priority": "high",
+    "status": "open",
+    "created_at": "2026-06-12T10:30:00.000Z"
+  }
+]
+```
+
+### Get Tickets with Filters (GET)
+
+```bash
+GET http://localhost:3000/tickets?priority=high&status=open
+```
+
+**Query Parameters:**
+- `priority` - Filter by priority (low, medium, high, critical)
+- `status` - Filter by status (open, in_progress, pending, closed)
+
+### Update Ticket Status (PUT)
+
+```bash
+PUT http://localhost:3000/tickets/1/status
+Content-Type: application/json
+
+{
+  "status": "closed"
+}
+```
+
+**Valid Statuses:** open, in_progress, pending, closed
+
+### Testing with Postman
+
+For complete Postman testing guide with examples, see [api/POSTMAN_GUIDE.md](api/POSTMAN_GUIDE.md).
+
+**Key Features:**
+- 10+ test case scenarios
+- Complete CRUD examples
+- Postman collection JSON for import
+- Filtering examples
+- Error handling examples
+
+### Quick Postman Tests
+
+1. **Create Ticket:**
+   - Method: POST
+   - URL: `http://localhost:3000/tickets`
+   - Body: `{"title":"Test","description":"Test ticket","priority":"high"}`
+
+2. **Get All Tickets:**
+   - Method: GET
+   - URL: `http://localhost:3000/tickets`
+
+3. **Filter by Priority:**
+   - Method: GET
+   - URL: `http://localhost:3000/tickets?priority=high`
+
+4. **Update Status:**
+   - Method: PUT
+   - URL: `http://localhost:3000/tickets/1/status`
+   - Body: `{"status":"closed"}`
+
+### API Troubleshooting
+
+**Cannot connect to port 3000:**
+- Verify API is running with `npm run dev`
+- Check if another process is using port 3000
+
+**Database connection error:**
+- Verify PostgreSQL is running
+- Check `.env` file database credentials
+- Ensure database exists
+
+**JSON parse errors:**
+- Verify Content-Type header is set to `application/json`
+- Check JSON syntax in request body
+
 ## Support
 
-For issues or questions, please refer to the troubleshooting section above or contact the development team.
+For issues or questions:
+1. Check the troubleshooting section for your component
+2. Refer to component-specific README files:
+   - [dotnet-task/README.md](dotnet-task/README.md)
+   - [api/README.md](api/README.md)
+   - [api/POSTMAN_GUIDE.md](api/POSTMAN_GUIDE.md)
+3. Contact the development team
+

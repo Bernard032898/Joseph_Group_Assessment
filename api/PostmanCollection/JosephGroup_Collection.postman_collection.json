@@ -1,0 +1,288 @@
+{
+  "info": {
+    "_postman_id": "1206dbab-e57e-4926-83f5-987d12bf0b83",
+    "name": "JosephGroup_Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "55094984",
+    "_collection_link": "https://go.postman.co/collection/55094984-1206dbab-e57e-4926-83f5-987d12bf0b83?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "JosephGroup_API_Test",
+      "item": [
+        {
+          "name": "OptionalFilter",
+          "item": [
+            {
+              "name": "Description",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/tickets?description=out",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "tickets"
+                  ],
+                  "query": [
+                    {
+                      "key": "description",
+                      "value": "out"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Title",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/tickets?title=Crash",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "tickets"
+                  ],
+                  "query": [
+                    {
+                      "key": "title",
+                      "value": "Crash"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "MultipleFilter",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/tickets?status=Open&priority=High&title=&description=not receiving",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "tickets"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "Open"
+                    },
+                    {
+                      "key": "priority",
+                      "value": "High"
+                    },
+                    {
+                      "key": "title",
+                      "value": ""
+                    },
+                    {
+                      "key": "description",
+                      "value": "not receiving"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "UpdateStatusOrPriorityLevel",
+          "item": [
+            {
+              "name": "UpdatePriority",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n     \"priority\": \"Low\"\r\n   }",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/tickets/1/priority",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "tickets",
+                    "1",
+                    "priority"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "UpdateTicketStatus",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "disabled": false
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"status\":\"Open\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/tickets/3/status",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "tickets",
+                    "3",
+                    "status"
+                  ]
+                },
+                "description": "Generated from cURL: curl --location --request PUT 'http://localhost:3000/Tickets/1' --header 'Content-Type: application/json' --data '{\"title\":\"Test\",\"description\":\"Test ticket\",\"priority\":\"High\",\"status\":\"Open\"}'"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "CreateNewTickets",
+          "item": [
+            {
+              "name": "CreateNewTicket",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "disabled": false
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"title\":\"MisConfiguration\",\"description\":\" Test\",\"priority\":\"High\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/Tickets",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "Tickets"
+                  ]
+                },
+                "description": "Generated from cURL: curl --location 'http://localhost:3000/Tickets' --header 'Content-Type: application/json' --data '{\"title\":\"Test\",\"description\":\"Test ticket\",\"priority\":\"High\",\"status\":\"Open\"}'"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "FilteredTickets",
+          "item": [
+            {
+              "name": "ListofAllTickets",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/tickets",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "tickets"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "OpenTickets",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{BASE_URL}}/Tickets?status=Open",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "Tickets"
+                  ],
+                  "query": [
+                    {
+                      "key": "status",
+                      "value": "Open"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "HighPriority",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{BASE_URL}}/tickets?priority=High",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "tickets"
+                  ],
+                  "query": [
+                    {
+                      "key": "priority",
+                      "value": "High"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
