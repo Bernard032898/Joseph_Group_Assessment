@@ -23,7 +23,7 @@ npm run dev
 
 Expected output:
 ```
-Server running on port 3000
+Server running on port 3000 or any server
 ```
 
 ### 2. Install Postman
@@ -39,6 +39,7 @@ In Postman:
 4. Add variable:
    - Key: `BASE_URL`
    - Value: `http://localhost:3000`
+5. Import the collection JosephGroup_Collection.postman_collection
 5. Save
 
 ---

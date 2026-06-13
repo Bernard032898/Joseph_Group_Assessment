@@ -16,4 +16,4 @@ npm install
 npm run dev
 ```
 
-The frontend expects the API at `http://localhost:3000` by default. You can override with a Vite env variable `VITE_API_URL`.
+The frontend expects the API at `http://localhost:3000` by default or any host available. You can override with a Vite env variable `VITE_API_URL`.
