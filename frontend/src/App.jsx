@@ -12,7 +12,10 @@ export default function App(){
   return (
     <div className="app">
       <header className="header">
-        <h1>Ticket Dashboard</h1>
+        <h1>Joseph Group Assessment</h1>
+      </header>
+      <header className="header">
+        <h3>Ticket Dashboard</h3>
         <nav>
           <button className={route==='list'? 'active':''} onClick={()=>navigate('list')}>Tickets</button>
           <button className={route==='create'? 'active':''} onClick={()=>navigate('create')}>Create Ticket</button>
