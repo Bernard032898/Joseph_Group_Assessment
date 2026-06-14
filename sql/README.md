@@ -1,113 +1,95 @@
 # SQL Setup for PostgreSQL
 
-This guide explains how to set up the PostgreSQL database for the Ticket API using the SQL files in this repository.
+This folder contains the SQL files required to prepare the database used by the Ticket API.
 
-## Files in this folder
-
-- `schema.sql`: creates the `Tickets` table.
-- `sampledata.sql`: inserts sample ticket data into the `Tickets` table.
-- `samplequery.sql`: example queries for validating the data.
+## Files
+- `schema.sql` — creates the `Tickets` table.
+- `sampledata.sql` — inserts sample ticket rows.
+- `samplequery.sql` — example views and validation queries.
 
 ## Prerequisites
-
 - PostgreSQL installed and running
-- Access to `psql` or pgAdmin
-- A PostgreSQL user with privileges to create databases
+- `psql` available, or a SQL client such as pgAdmin
+- A PostgreSQL user with permission to create a database and tables
 
-## Step 1: Create the database
+## Setup
 
-Open a terminal or PowerShell, then run:
-
+### 1. Create the database
+Open a terminal or PowerShell and run:
 ```powershell
-psql -U postgres
+psql -U postgres -c "CREATE DATABASE helpdesk_ticket_system;"
 ```
-
 If you use a different PostgreSQL user, replace `postgres` with your username.
 
-At the `psql` prompt, create the database:
-
-```sql
-CREATE DATABASE helpdesk_ticket_system;
+### 2. Create the schema
+Import `schema.sql` into the new database:
+```powershell
+psql -U postgres -d helpdesk_ticket_system -f "sql/schema.sql"
 ```
 
-If you want to use a dedicated user, run:
-
-```sql
-CREATE USER ticket_user WITH PASSWORD 'your_password';
-GRANT ALL PRIVILEGES ON DATABASE helpdesk_ticket_system TO ticket_user;
+### 3. Load sample data
+Import `sampledata.sql`:
+```powershell
+psql -U postgres -d helpdesk_ticket_system -f "sql/sampledata.sql"
 ```
 
-## Step 2: Create the table schema
-
-Connect to the new database:
-
-```sql
-\c helpdesk_ticket_system
+### 4. Verify the database
+Run these commands:
+```powershell
+psql -U postgres -d helpdesk_ticket_system -c "SELECT COUNT(*) FROM Tickets;"
+psql -U postgres -d helpdesk_ticket_system -c "SELECT * FROM Tickets LIMIT 5;"
 ```
 
-Then import the schema file:
-
-```sql
-\i 'C:/Users/DELL/Documents/Joseph Group Assessment/Joseph_Group_Assessment/sql/schema.sql'
+### 5. (Optional) Use `samplequery.sql`
+Load the example views and queries:
+```powershell
+psql -U postgres -d helpdesk_ticket_system -f "sql/samplequery.sql"
 ```
 
-This creates the `Tickets` table with fields:
+## Table details
+The `Tickets` table defined by `schema.sql` includes:
+- `id` — serial primary key
+- `title` — required text
+- `description` — optional text
+- `priority` — required, values: `Low`, `Medium`, `High`, `Critical`
+- `status` — required, values: `Open`, `In Progress`, `Closed`
+- `created_at` — timestamp defaulting to `CURRENT_TIMESTAMP`
 
-- `id`
-- `title`
-- `description`
-- `priority`
-- `status`
-- `created_at`
+## Notes and assumptions
+- The API expects `helpdesk_ticket_system` on `localhost:5432`.
+- `api/config/db.js` currently uses hardcoded credentials.
+- If your database user/password differ, update `api/config/db.js`.
+- Use full paths in `psql` if you run commands from outside the repository.
+- If PostgreSQL is not running, start it before importing the SQL files.
+- `samplequery.sql` creates views for open tickets, counts by priority, and most recent tickets.
 
-## Step 3: Load sample data
-
-From the same `psql` session, run:
-
-```sql
-\i 'C:/Users/DELL/Documents/Joseph Group Assessment/Joseph_Group_Assessment/sql/sampledata.sql'
+## Common commands
+```powershell
+psql -U postgres -d helpdesk_ticket_system -f "sql/schema.sql"
+psql -U postgres -d helpdesk_ticket_system -f "sql/sampledata.sql"
+psql -U postgres -d helpdesk_ticket_system -f "sql/samplequery.sql"
 ```
 
-This inserts sample tickets into the `Tickets` table.
+## API connection reminder
+The API reads from the local PostgreSQL database using `api/config/db.js`.
+Update this file if you change host, port, database name, user, or password.
 
-## Step 4: Verify the setup
+## Test cases and validation
+1. **Schema creation**
+	- Run: `psql -U postgres -d helpdesk_ticket_system -f "sql/schema.sql"`
+	- Expected: `CREATE TABLE` completes without error.
+2. **Load sample data**
+	- Run: `psql -U postgres -d helpdesk_ticket_system -f "sql/sampledata.sql"`
+	- Expected: rows are inserted successfully.
+3. **Verify row count**
+	- Run: `psql -U postgres -d helpdesk_ticket_system -c "SELECT COUNT(*) FROM Tickets;"`
+	- Expected: returns a positive integer (for sample data, 20 rows).
+4. **Verify sample queries**
+	- Run: `psql -U postgres -d helpdesk_ticket_system -f "sql/samplequery.sql"`
+	- Expected: views are created without error.
 
-Run these checks:
-
-```sql
-SELECT COUNT(*) FROM Tickets;
-SELECT * FROM Tickets LIMIT 5;
-```
-
-You can also use the example queries in `samplequery.sql`:
-
-```sql
-\i 'C:/Users/DELL/Documents/Joseph Group Assessment/Joseph_Group_Assessment/sql/samplequery.sql'
-```
-
-## Step 5: Match the API configuration
-
-The API uses the database connection values in `api/config/db.js`:
-
-- `host`: `localhost`
-- `database`: `helpdesk_ticket_system`
-- `user`: `postgres`
-- `password`: `M5rch@281998!`
-- `port`: `5432`
-
-If you changed the database user or password, update `api/config/db.js` accordingly.
-
-## Optional: Use pgAdmin
-
-If you prefer pgAdmin:
-
-1. Create the database `helpdesk_ticket_system`.
-2. Open the Query Tool.
-3. Run the SQL from `schema.sql`.
-4. Run the SQL from `sampledata.sql`.
-
-## Notes
-
-- Use the full path to the SQL files when running `\i` from `psql`.
-- If you rename the database or user, update the API database config.
-- The API expects PostgreSQL to be reachable at `localhost:5432`.
+### Validation
+- Confirm the `Tickets` table exists with the expected columns.
+- Confirm `priority` and `status` constraints are enforced.
+- Confirm sample rows exist with valid `status` and `priority` values.
+- Confirm the database name and credentials match `api/config/db.js`.

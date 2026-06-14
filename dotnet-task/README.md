@@ -1,82 +1,41 @@
-# dotnet-task Setup and Testing Guide
+# dotnet-task
 
-This README explains how to set up, run, and test the `dotnet-task` console application.
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Prerequisites](#prerequisites)
-- [Setup](#setup)
-- [Run the Application](#run-the-application)
-- [Verify Output](#verify-output)
-- [Test Cases](#test-cases)
-- [Modify Sample Data](#modify-sample-data)
-- [Troubleshooting](#troubleshooting)
-- [Project Files](#project-files)
-- [Quick Commands](#quick-commands)
-- [Need Help?](#need-help)
-
----
-
-## Overview
-
-The `dotnet-task` project reads employee records from `employees.csv`, groups them by department, and prints employee statistics.
-
-## Prerequisites
-
-Install these tools before continuing:
-
-- **Git**
-  - Verify with: `git --version`
-  - Download: https://git-scm.com/download/win
-- **.NET SDK 10.0 or higher**
-  - Verify with: `dotnet --version`
-  - Download: https://dotnet.microsoft.com/download
-
----
+A small .NET console application that reads `employees.csv`, groups employees by department, and prints department counts.
 
 ## Setup
 
-1. Open **Command Prompt** or **PowerShell**.
-2. Navigate to the folder where you want the repository.
-   ```powershell
-   cd C:\Users\YourName\Documents
-   ```
-3. Clone the repository.
-   ```powershell
-   git clone <repository-url>
-   ```
-4. Open the project folder.
-   ```powershell
-   cd Joseph_Group_Assessment\dotnet-task
-   ```
-5. Restore dependencies.
-   ```powershell
-   dotnet restore
-   ```
-6. Build the project.
-   ```powershell
-   dotnet build
-   ```
+### Prerequisites
+- .NET SDK 10.0 or higher
+- A terminal such as PowerShell or Command Prompt
 
----
+### Install / restore
+```powershell
+cd dotnet-task
+dotnet restore
+```
 
-## Run the Application
+### Build
+```powershell
+dotnet build
+```
 
-From the `dotnet-task` folder, run:
+## Run
 
+From the `dotnet-task` folder:
 ```powershell
 dotnet run
 ```
 
-The app reads `employees.csv` and prints department statistics.
+The application reads `employees.csv` from the current directory and prints a summary of employee counts by department.
 
----
+## Notes and assumptions
+- `employees.csv` must exist in the `dotnet-task` folder.
+- The file must contain a header row: `employeeId,fullName,department`.
+- Each employee line must contain exactly three comma-separated fields.
+- If the file is missing, the app prints `employees.csv not found.` and exits.
+- The app currently does not support additional CSV quoting or escaped commas.
 
-## Verify Output
-
-Expected output for the provided sample data:
-
+## Sample output
 ```text
 === Employee Statistics ===
 
@@ -88,132 +47,41 @@ HR: 2
 IT: 3
 ```
 
-If you see this output, setup is complete.
+## Test cases and validation
+1. **Default dataset**
+	- Run: `dotnet run`
+	- Expected: output includes `Total Employees: 6` and counts for `Finance`, `HR`, and `IT`.
+2. **Missing CSV file**
+	- Rename or remove `employees.csv`.
+	- Run: `dotnet run`
+	- Expected: output `employees.csv not found.`
+3. **Header-only CSV**
+	- Keep only the header row in `employees.csv`.
+	- Run: `dotnet run`
+	- Expected: `Total Employees: 0` and no department lines.
+4. **Single department data**
+	- Use rows where all employees share one department.
+	- Expected: total count matches number of rows and a single department count is printed.
 
----
+### Validation
+- Confirm the header is exactly `employeeId,fullName,department`.
+- Confirm each line has exactly 3 comma-separated values.
+- Confirm the application prints a summary and exits cleanly.
+- Confirm the app handles missing CSV file gracefully.
 
-## Test Cases
-
-Use these cases to verify behavior and edge cases.
-
-### Test Case 1: Default Data
-- Description: Validate with sample data.
-- Expected: 6 total employees, 3 departments.
-
-### Test Case 2: Single Employee
-- Data:
-  ```csv
-  employeeId,fullName,department
-  1,Alice Johnson,IT
-  ```
-- Expected: `Total Employees: 1`, `IT: 1`
-
-### Test Case 3: One Department Only
-- Data:
-  ```csv
-  employeeId,fullName,department
-  1,John Doe,IT
-  2,Jane Smith,IT
-  3,Michael Brown,IT
-  ```
-- Expected: `Total Employees: 3`, `IT: 3`
-
-### Test Case 4: Equal Department Distribution
-- Data:
-  ```csv
-  employeeId,fullName,department
-  1,John Doe,IT
-  2,Jane Smith,HR
-  3,Michael Brown,Finance
-  4,Sarah Wilson,IT
-  5,Chris Evans,HR
-  6,Robert King,Finance
-  ```
-- Expected departments sorted alphabetically with equal counts.
-
-### Test Case 5: Empty Dataset
-- Data:
-  ```csv
-  employeeId,fullName,department
-  ```
-- Expected: `Total Employees: 0`, no departments listed.
-
-### Test Case 6: Missing File
-- Procedure: rename or remove `employees.csv`, then run.
-- Expected: `employees.csv not found.`
-
----
-
-## Modify Sample Data
-
+## Modify sample data
 1. Open `employees.csv`.
-2. Keep the format exactly:
-   ```csv
-   employeeId,fullName,department
-   1,John Doe,IT
-   ```
+2. Edit or add rows while preserving the header.
 3. Save the file.
 4. Run `dotnet run` again.
 
----
-
 ## Troubleshooting
+- If `dotnet` is not found, install the .NET SDK and restart the terminal.
+- If build fails, try `dotnet clean`, then `dotnet restore`, then `dotnet build`.
+- If CSV parsing fails, ensure each row has 3 fields and the header is correct.
 
-### .NET SDK Missing
-- Install .NET SDK 10.0 or higher.
-- Restart your terminal.
-- Verify with `dotnet --version`.
+## Files
+- `Program.cs` — application logic
+- `employees.csv` — sample data
+- `dotnet-task.csproj` — project file
 
-### Git Missing
-- Install Git and add it to PATH.
-- Verify with `git --version`.
-
-### `employees.csv not found`
-- Confirm you are inside `dotnet-task`.
-- Confirm `employees.csv` exists.
-
-### Build Errors
-- Clean the project: `dotnet clean`
-- Restore again: `dotnet restore`
-- Build again: `dotnet build`
-
-### CSV Formatting Issues
-- Make sure the first line is exactly:
-  `employeeId,fullName,department`
-- Each row must have 3 values separated by commas.
-
----
-
-## Project Files
-
-- `Program.cs` - application logic
-- `employees.csv` - sample employee data
-- `dotnet-task.csproj` - project settings
-- `bin/` - build output
-- `obj/` - build artifacts
-
----
-
-## Quick Commands
-
-```powershell
-cd Joseph_Group_Assessment\dotnet-task
-
-dotnet restore
-dotnet build
-dotnet run
-dotnet clean
-```
-
----
-
-## Need Help?
-
-If you still have issues:
-1. Re-read the troubleshooting section.
-2. Check the command output for the actual error.
-3. Confirm the correct working directory.
-4. Ask the development team for assistance.
-
-
-**Last Updated**: 2026-06-12

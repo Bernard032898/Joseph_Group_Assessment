@@ -1,194 +1,109 @@
 # Ticket API
 
-A Node.js Express API for managing support tickets with a PostgreSQL database.
+A Node.js + Express REST API for managing support tickets backed by PostgreSQL.
 
-## Quick Start
+## Setup
 
 ### Prerequisites
-- Node.js (v14 or higher)
-- PostgreSQL
-- npm or yarn
+- Node.js 14 or higher
+- PostgreSQL installed and running
+- `npm` available
 
-### Installation
-
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-2. Configure environment variables:
-   - Create a `.env` file in the root directory
-   - Add database connection details:
-     ```
-     DB_HOST=localhost
-     DB_USER=your_user
-     DB_PASSWORD=your_password
-     DB_NAME=tickets_db
-     DB_PORT=5432
-     ```
-
-3. Start the server:
-   ```bash
-   npm run dev
-   ```
-
-   The API will run on `http://localhost:3000`
-
-## API Endpoints
-
-### Create Ticket
+### Install dependencies
+```bash
+cd api
+npm install
 ```
-POST /tickets
-Content-Type: application/json
 
+### Database requirements
+The API expects a PostgreSQL database named `helpdesk_ticket_system` on `localhost:5432`.
+The current database connection is set in `api/config/db.js`:
+- user: `postgres`
+- password: `M5rch@281998!`
+- database: `helpdesk_ticket_system`
+
+If your database credentials differ, update `api/config/db.js`.
+
+### Run the API
+```bash
+npm run dev
+```
+
+Or run without nodemon:
+```bash
+npm start
+```
+
+The server listens on port `3000` by default. You can override it with `PORT`.
+
+## How to run
+1. Start PostgreSQL.
+2. Make sure the database is created and seeded using the SQL files in `sql/`.
+3. From `api/`, install dependencies and start the application.
+4. The API will be available at `http://localhost:3000`.
+
+## Endpoints
+- `GET /tickets` — list tickets
+- `GET /tickets/:id` — get a ticket by ID
+- `POST /tickets` — create a ticket
+- `PUT /tickets/:id/status` — update ticket status
+- `PUT /tickets/:id/priority` — update ticket priority
+- `DELETE /tickets/:id` — delete a ticket
+
+### Example payload for create
+```json
 {
   "title": "Issue title",
-  "description": "Issue description",
+  "description": "Issue details",
   "priority": "High"
 }
 ```
 
-### Get All Tickets
-```
-GET /tickets
-```
+## Notes and assumptions
+- The API uses hardcoded DB connection settings in `api/config/db.js`.
+- `dotenv` is installed but `config/db.js` does not currently load `.env` values.
+- CORS is enabled for all origins by default.
+- If you use a different port or DB host, update `app.js` and `config/db.js`.
+- The app expects PostgreSQL on `localhost:5432`.
 
-### Get Tickets with Filters
-```
-GET /tickets?priority=High&status=Open
-```
+## Test cases and validation
+1. **List tickets**
+  - Request: `GET http://localhost:3000/tickets`
+  - Expected: HTTP 200 response and a JSON array.
+2. **Create a ticket**
+  - Request: `POST http://localhost:3000/tickets`
+  - Payload: `{"title":"Test","description":"Test ticket","priority":"High"}`
+  - Expected: HTTP 201 created and returned object includes an `id`.
+3. **Get ticket by ID**
+  - Request: `GET http://localhost:3000/tickets/:id`
+  - Expected: HTTP 200 for an existing ID, HTTP 404 for a missing ID.
+4. **Update ticket status**
+  - Request: `PUT http://localhost:3000/tickets/:id/status`
+  - Payload: `{"status":"Closed"}`
+  - Expected: HTTP 200 and updated `status` field equals `Closed`.
+5. **Delete ticket**
+  - Request: `DELETE http://localhost:3000/tickets/:id`
+  - Expected: HTTP 200 or 204 and follow-up `GET /tickets/:id` returns 404.
 
-### Get Tickets by Optional Filters
-```
-GET /tickets?status=Open&priority=High&title=login&description=error
-```
+### Validation checks
+- Confirm the API returns JSON payloads for success and error cases.
+- Confirm `priority` uses one of `Low`, `Medium`, `High`, `Critical`.
+- Confirm `status` uses one of `Open`, `In Progress`, `Closed`.
+- Use the Postman collection in `api/PostmanCollection/JosephGroup_Collection.postman_collection.json` or `api/POSTMAN_GUIDE.md` to exercise CRUD behavior.
 
-Available filters:
-- `status`
-- `priority`
-- `title`
-- `description`
-
-### Get Ticket by ID
-```
-GET /tickets/:id
-```
-
-### Update Ticket Status
-```
-PUT /tickets/:id/status
-Content-Type: application/json
-
-{
-  "status": "Closed"
-}
-```
-
-### Update Ticket Priority
-```
-PUT /tickets/:id/priority
-Content-Type: application/json
-
-{
-  "priority": "Critical"
-}
+## Quick test commands
+```bash
+curl -X GET http://localhost:3000/tickets
+curl -X POST http://localhost:3000/tickets -H "Content-Type: application/json" -d '{"title":"Test","description":"Test ticket","priority":"High"}'
 ```
 
-### Delete Ticket
-```
-DELETE /tickets/:id
-```
-
-## Testing with Postman
-
-For detailed Postman testing guide including CRUD examples, see [POSTMAN_GUIDE.md](POSTMAN_GUIDE.md).
-
-### Quick Test
-
-1. **Create a ticket:**
-   ```bash
-   curl -X POST http://localhost:3000/tickets \
-     -H "Content-Type: application/json" \
-     -d '{"title":"Test","description":"Test ticket","priority":"High"}'
-   ```
-
-2. **Get all tickets:**
-   ```bash
-   curl http://localhost:3000/tickets
-   ```
-
-3. **Update ticket status:**
-
-   - **Bash / WSL / Git Bash:**
-     ```bash
-     curl -X PUT http://localhost:3000/tickets/1/status \
-       -H "Content-Type: application/json" \
-       -d '{"status":"Closed"}'
-     ```
-
-   - **Windows PowerShell:**
-     ```powershell
-     curl.exe -X PUT http://localhost:3000/tickets/1/status -H "Content-Type: application/json" -d '{"status":"Closed"}'
-     ```
-
-## Project Structure
-
+## Folder structure
 ```
 api/
-├── app.js                 # Express app setup
-├── package.json          # Dependencies
-├── config/
-│   └── db.js            # Database connection
-├── controllers/
-│   └── ticketController.js   # Business logic
-├── routes/
-│   └── ticketRoutes.js      # Route definitions
-└── POSTMAN_GUIDE.md     # Postman testing guide
+├── app.js
+├── package.json
+├── config/db.js
+├── controllers/ticketController.js
+├── routes/ticketRoutes.js
+└── POSTMAN_GUIDE.md
 ```
-
-## Database Schema
-
-The `Tickets` table includes:
-- `id` - Primary key (auto-increment)
-- `title` - Ticket title
-- `description` - Detailed description
-- `priority` - Priority level (Low, Medium, High, Critical)
-- `status` - Status (Open, In Progress, Closed)
-- `created_at` - Creation timestamp
-- `updated_at` - Last update timestamp
-
-## Priority Levels
-
-- `Low` - Non-urgent issues
-- `Medium` - Standard priority
-- `High` - Urgent issues
-- `Critical` - System-breaking issues
-
-## Status Values
-
-- `Open` - New ticket
-- `In Progress` - Being worked on
-- `Closed` - Resolved
-
-## Running Tests
-
-Use Postman collection or curl commands to test all CRUD operations. See [POSTMAN_GUIDE.md](POSTMAN_GUIDE.md) for complete examples.
-
-## Troubleshooting
-
-### Cannot connect to database
-- Verify PostgreSQL is running
-- Check `.env` file credentials
-- Ensure database exists
-
-### Port 3000 already in use
-- Kill the process: `lsof -ti:3000 | xargs kill -9` (macOS/Linux)
-- Or use a different port in app.js
-
-### Module not found errors
-- Run `npm install` again
-- Delete `node_modules` and reinstall
-
-## Support
-
-For detailed API testing examples and Postman setup, refer to [POSTMAN_GUIDE.md](POSTMAN_GUIDE.md).

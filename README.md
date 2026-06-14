@@ -26,28 +26,36 @@ This project includes:
   - [Download .NET SDK](https://dotnet.microsoft.com/download)
 
 ### For API:
-- **Node.js** (v14 or higher)
-- **npm** or **yarn**
-- **PostgreSQL** (for database)
+# Joseph Group Assessment
 
-## Quick Start
+This repository contains the Joseph Group Assessment project. This top-level README summarizes setup, run steps, test scenarios and links for each component:
 
-### dotnet-task Setup
+- `api/` — Ticket API (Node.js + Express)
+- `frontend/` — React + Vite UI
+- `dotnet-task/` — .NET console utility
+- `sql/` — PostgreSQL schema and sample data
+- `api/PostmanCollection/` — Postman collection for API testing
 
-From the repository root:
+Use the per-component READMEs for full details; quick links are below.
 
-```bash
-cd dotnet-task
-dotnet restore
-dotnet build
-dotnet run
+## Quick Links
+- API: [api/README.md](api/README.md)
+- Frontend: [frontend/README.md](frontend/README.md)
+- dotnet task: [dotnet-task/README.md](dotnet-task/README.md)
+- SQL: [sql/README.md](sql/README.md)
+- Postman collection: `api/PostmanCollection/JosephGroup_Collection.postman_collection.json`
+
+## Quick Setup Summary
+
+1) Prepare the database (PostgreSQL):
+
+```powershell
+psql -U postgres -c "CREATE DATABASE helpdesk_ticket_system;"
+psql -U postgres -d helpdesk_ticket_system -f "sql/schema.sql"
+psql -U postgres -d helpdesk_ticket_system -f "sql/sampledata.sql"
 ```
 
-See [dotnet-task/README.md](dotnet-task/README.md) for detailed instructions.
-
-### API Setup
-
-From the repository root:
+2) Start the API:
 
 ```bash
 cd api
@@ -55,368 +63,85 @@ npm install
 npm run dev
 ```
 
-The API will run on `http://localhost:3000`
-
-For Postman testing guide and CRUD examples, see [api/POSTMAN_GUIDE.md](api/POSTMAN_GUIDE.md).
-
-## Project Structure
-
-```
-Joseph_Group_Assessment/
-├── dotnet-task/
-│   ├── README.md              # dotnet-task setup guide
-│   ├── Program.cs             # Main application code
-│   ├── employees.csv          # Sample employee data
-│   └── dotnet-task.csproj     # Project configuration
-├── api/
-│   ├── README.md              # API setup guide
-│   ├── POSTMAN_GUIDE.md       # Postman testing guide
-│   ├── app.js                 # Express application
-│   ├── package.json           # Dependencies
-│   ├── controllers/           # Business logic
-│   ├── routes/                # API routes
-│   └── config/                # Database configuration
-└── README.md                  # This file
-```
-
-## Components in Detail
-
-### 1. dotnet-task
-
-**Purpose:** Employee data processing and statistics
-
-**Features:**
-- Reads CSV files containing employee data
-- Groups employees by department
-- Displays statistical summaries
-- Validates data format
-
-**Technology:** C#, .NET 10.0
-
-**Quick Test:** [dotnet-task/README.md](dotnet-task/README.md)
-
-## Running the Application
-
-### Run the Application
-
-From the `dotnet-task` directory, run:
+3) Start the frontend:
 
 ```bash
+cd frontend
+npm install
+npm run dev
+```
+
+4) Run the dotnet utility (optional):
+
+```powershell
+cd dotnet-task
+dotnet restore
 dotnet run
 ```
 
-### Expected Output
+## Test scenarios and validation (summary)
 
-The application will display employee statistics in the following format:
+- API: see `api/README.md` for CRUD test cases. Quick checks:
+  - `GET /tickets` returns 200 and JSON array
+  - `POST /tickets` returns 201 and created ticket with `id`
+  - `PUT /tickets/:id/status` updates status to `Closed`
+
+- Frontend: see `frontend/README.md` for UI tests. Quick checks:
+  - App loads in browser (Vite)
+  - Create ticket form validates input and submits
+  - Ticket list loads and filtering works
+
+- dotnet-task: see `dotnet-task/README.md` for test cases. Quick checks:
+  - `dotnet run` prints correct totals for sample CSV
+  - Missing CSV prints `employees.csv not found.`
+
+- SQL: see `sql/README.md` for schema and query validation. Quick checks:
+  - `schema.sql` creates `Tickets` table
+  - `sampledata.sql` inserts sample rows
+  - `samplequery.sql` creates views
+
+## Postman
+
+Import `api/PostmanCollection/JosephGroup_Collection.postman_collection.json` into Postman. See `api/POSTMAN_GUIDE.md` for collection instructions and environment variables.
+
+## Project structure
 
 ```
-=== Employee Statistics ===
-
-Total Employees: 6
-
-Employees By Department:
-Finance: 1
-HR: 2
-IT: 3
+Joseph_Group_Assessment/
+├── api/
+│   ├── README.md
+│   ├── POSTMAN_GUIDE.md
+│   ├── PostmanCollection/
+│   │   └── JosephGroup_Collection.postman_collection.json
+│   ├── app.js
+│   └── config/
+├── frontend/
+│   ├── README.md
+│   └── src/
+├── dotnet-task/
+│   ├── README.md
+│   └── Program.cs
+├── sql/
+│   ├── README.md
+│   ├── schema.sql
+│   └── sampledata.sql
+└── README.md
 ```
 
-The output shows:
-- Total number of employees in the CSV file
-- Count of employees grouped by department (sorted alphabetically)
+## Notes and assumptions
 
-## Testing
+- The `api/config/db.js` file currently contains the database connection values used by the API. If your DB credentials differ, update that file or modify the API to use environment variables.
+- The frontend expects the API at `http://localhost:3000` by default. Use `frontend/.env` with `VITE_API_URL` to change it.
 
-### Test Data
+## Troubleshooting
 
-The application includes sample employee data in `employees.csv`:
-
-```csv
-employeeId,fullName,department
-1,John Doe,IT
-2,Jane Smith,HR
-3,Michael Brown,IT
-4,Sarah Wilson,Finance
-5,Chris Evans,HR
-6,Robert King,IT
-```
-
-### Manual Testing
-
-1. Run the application using `dotnet run`
-2. Verify the output matches the expected statistics
-3. Check that employee counts by department are correct
-
-### Modifying Test Data
-
-To test with different employee data:
-
-1. Edit `employees.csv` in the `dotnet-task` folder
-2. Ensure the CSV format matches the existing structure (employeeId, fullName, department)
-3. Run `dotnet run` again to see updated statistics
-
-## Test Case Scenarios
-
-Run through these test cases to verify the application works correctly in various scenarios:
-
-### Test Case 1: Default Data (Normal Case)
-**Description**: Application runs with the original CSV data
-
-**Test Data** (`employees.csv`):
-```csv
-employeeId,fullName,department
-1,John Doe,IT
-2,Jane Smith,HR
-3,Michael Brown,IT
-4,Sarah Wilson,Finance
-5,Chris Evans,HR
-6,Robert King,IT
-```
-
-**Expected Output**:
-```
-=== Employee Statistics ===
-
-Total Employees: 6
-
-Employees By Department:
-Finance: 1
-HR: 2
-IT: 3
-```
-
-**Validation**: ✓ Departments sorted alphabetically | ✓ Correct employee counts
+- If the API fails to start, confirm PostgreSQL is running and the `helpdesk_ticket_system` database exists.
+- If the frontend cannot load data, confirm the API is reachable and `VITE_API_URL` is correct.
+- If `dotnet` is not found, install the .NET SDK and restart your terminal.
 
 ---
 
-### Test Case 2: Single Employee
-**Description**: Test application with only one employee
-
-**Test Data** (`employees.csv`):
-```csv
-employeeId,fullName,department
-1,Alice Johnson,IT
-```
-
-**Expected Output**:
-```
-=== Employee Statistics ===
-
-Total Employees: 1
-
-Employees By Department:
-IT: 1
-```
-
-**Validation**: ✓ Total count is 1 | ✓ Single department displayed
-
----
-
-### Test Case 3: All Employees in Same Department
-**Description**: All employees belong to a single department
-
-**Test Data** (`employees.csv`):
-```csv
-employeeId,fullName,department
-1,John Doe,IT
-2,Jane Smith,IT
-3,Michael Brown,IT
-4,Sarah Wilson,IT
-5,Chris Evans,IT
-```
-
-**Expected Output**:
-```
-=== Employee Statistics ===
-
-Total Employees: 5
-
-Employees By Department:
-IT: 5
-```
-
-**Validation**: ✓ Total is 5 | ✓ Only IT department displayed with count 5
-
----
-
-### Test Case 4: Multiple Departments with Equal Distribution
-**Description**: Equal number of employees in each department
-
-**Test Data** (`employees.csv`):
-```csv
-employeeId,fullName,department
-1,John Doe,IT
-2,Jane Smith,HR
-3,Michael Brown,Finance
-4,Sarah Wilson,IT
-5,Chris Evans,HR
-6,Robert King,Finance
-```
-
-**Expected Output**:
-```
-=== Employee Statistics ===
-
-Total Employees: 6
-
-Employees By Department:
-Finance: 2
-HR: 2
-IT: 2
-```
-
-**Validation**: ✓ Equal counts | ✓ All departments sorted alphabetically
-
----
-
-### Test Case 5: Large Dataset
-**Description**: Application handles a larger number of employees
-
-**Test Data** (`employees.csv`):
-```csv
-employeeId,fullName,department
-1,John Doe,IT
-2,Jane Smith,HR
-3,Michael Brown,IT
-4,Sarah Wilson,Finance
-5,Chris Evans,HR
-6,Robert King,IT
-7,Emma Davis,Finance
-8,David Wilson,IT
-9,Lisa Anderson,HR
-10,Tom Miller,Finance
-11,Kate Taylor,IT
-12,Mark Brown,HR
-```
-
-**Expected Output**:
-```
-=== Employee Statistics ===
-
-Total Employees: 12
-
-Employees By Department:
-Finance: 3
-HR: 3
-IT: 4
-IT: 4
-```
-
-**Validation**: ✓ Correct total count | ✓ Accurate per-department counts
-
----
-
-### Test Case 6: Empty File (Only Headers)
-**Description**: CSV file contains only headers, no employees
-
-**Test Data** (`employees.csv`):
-```csv
-employeeId,fullName,department
-```
-
-**Expected Output**:
-```
-=== Employee Statistics ===
-
-Total Employees: 0
-
-Employees By Department:
-```
-
-**Validation**: ✓ Shows 0 employees | ✓ No departments listed
-
----
-
-### Test Case 7: Special Characters in Names
-**Description**: Employee names contain special characters
-
-**Test Data** (`employees.csv`):
-```csv
-employeeId,fullName,department
-1,José García,IT
-2,François Müller,HR
-3,João Silva,Finance
-4,Anna O'Connor,IT
-5,Søren Andersen,HR
-```
-
-**Expected Output**:
-```
-=== Employee Statistics ===
-
-Total Employees: 5
-
-Employees By Department:
-Finance: 1
-HR: 2
-IT: 2
-```
-
-**Validation**: ✓ Special characters handled correctly | ✓ Names displayed properly
-
----
-
-### Test Case 8: Missing CSV File
-**Description**: Application behavior when employees.csv is missing
-
-**Test Procedure**:
-1. Rename or delete `employees.csv`
-2. Run `dotnet run`
-
-**Expected Output**:
-```
-employees.csv not found.
-```
-
-**Validation**: ✓ Graceful error message | ✓ Application exits cleanly
-
----
-
-### Test Case 9: Departments Sorted Alphabetically
-**Description**: Verify department names are sorted alphabetically regardless of data order
-
-**Test Data** (`employees.csv`):
-```csv
-employeeId,fullName,department
-1,John Doe,Zebra
-2,Jane Smith,Apple
-3,Michael Brown,Banana
-4,Sarah Wilson,Apple
-5,Chris Evans,Zebra
-```
-
-**Expected Output**:
-```
-=== Employee Statistics ===
-
-Total Employees: 5
-
-Employees By Department:
-Apple: 2
-Banana: 1
-Zebra: 2
-```
-
-**Validation**: ✓ Departments in alphabetical order | ✓ Not in input order
-
----
-
-### Test Case 10: Many Departments
-**Description**: Test with multiple diverse departments
-
-**Test Data** (`employees.csv`):
-```csv
-employeeId,fullName,department
-1,John Doe,IT
-2,Jane Smith,HR
-3,Michael Brown,Finance
-4,Sarah Wilson,Operations
-5,Chris Evans,Marketing
-6,Robert King,Sales
-7,Emma Davis,Legal
-8,David Wilson,Support
-```
-
-**Expected Output**:
+If you want, I can add a short script or single command to start the whole stack locally (API + frontend) using concurrently or a PowerShell script. Let me know which you prefer.
 ```
 === Employee Statistics ===
 
