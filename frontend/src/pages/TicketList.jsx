@@ -10,7 +10,7 @@ export default function TicketList({ reloadFlag=0, onCreateClick }){
   const [error, setError] = useState(null)
   const [resolvingIds, setResolvingIds] = useState([])
   const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(PAGE_SIZE_OPTIONS[0])
+  const [pageSize, setPageSize] = useState(PAGE_SIZE_OPTIONS[1])
 
   const load = async () => {
     setLoading(true)
