@@ -10,7 +10,7 @@ export default function TicketList({ reloadFlag=0, onCreateClick }){
   const [error, setError] = useState(null)
   const [resolvingIds, setResolvingIds] = useState([])
   const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(PAGE_SIZE_OPTIONS[0])
+  const [pageSize, setPageSize] = useState(PAGE_SIZE_OPTIONS[1])
 
   const load = async () => {
     setLoading(true)
@@ -88,11 +88,8 @@ export default function TicketList({ reloadFlag=0, onCreateClick }){
                 <tr key={t.id} className={t.status === 'Closed' ? 'row-closed' : ''}>
                   <td>{t.title}</td>
                   <td>{t.priority}</td>
-                  <td>{t.status}</td>
-                  <td>{new Date(t.created_at).toLocaleString()}</td>
-                  <td>{t.description}</td>
                   <td>
-                    {t.status !== 'Closed' ? (
+                    {t.status === 'Open' ? (
                       <button
                         className="small"
                         onClick={async ()=>{
@@ -101,7 +98,7 @@ export default function TicketList({ reloadFlag=0, onCreateClick }){
                             const res = await fetch(`${API}/tickets/${t.id}/status`, {
                               method: 'PUT',
                               headers: {'Content-Type':'application/json'},
-                              body: JSON.stringify({ status: 'Closed' })
+                              body: JSON.stringify({ status: 'In Progress' })
                             })
                             if (!res.ok) {
                               const err = await res.json().catch(()=>({message:res.statusText}))
@@ -115,9 +112,43 @@ export default function TicketList({ reloadFlag=0, onCreateClick }){
                           }
                         }}
                         disabled={resolvingIds.includes(t.id)}
-                      >{resolvingIds.includes(t.id)?'Resolving...':'Resolve'}</button>
+                      >{resolvingIds.includes(t.id)?'Processing...':'Start'}</button>
                     ) : (
+                      <span>{t.status}</span>
+                    )}
+                  </td>
+                  <td>{new Date(t.created_at).toLocaleString()}</td>
+                  <td>{t.description}</td>
+                  <td>
+                    {t.status === 'Closed' ? (
                       <span className="status-label">Closed</span>
+                    ) : (
+                      <>
+                        <button
+                          className="small"
+                          onClick={async ()=>{
+                            try{
+                              setResolvingIds(prev=>[...prev,t.id])
+                              const res = await fetch(`${API}/tickets/${t.id}/status`, {
+                                method: 'PUT',
+                                headers: {'Content-Type':'application/json'},
+                                body: JSON.stringify({ status: 'Closed' })
+                              })
+                              if (!res.ok) {
+                                const err = await res.json().catch(()=>({message:res.statusText}))
+                                throw new Error(err.message || 'Failed')
+                              }
+                              await load()
+                            }catch(err){
+                              setError(err.message)
+                            }finally{
+                              setResolvingIds(prev=>prev.filter(id=>id!==t.id))
+                            }
+                          }}
+                          disabled={resolvingIds.includes(t.id) || t.status !== 'In Progress'}
+                          title={t.status !== 'In Progress' ? 'Start the ticket before resolving' : ''}
+                        >{resolvingIds.includes(t.id)?'Processing...':'Resolve'}</button>
+                      </>
                     )}
                   </td>
                 </tr>
